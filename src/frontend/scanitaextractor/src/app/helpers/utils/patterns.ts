@@ -1,0 +1,1 @@
+export const ScanItaUrlPattern = /^https:\/\/scanita\.org\/scan\/\d+$/

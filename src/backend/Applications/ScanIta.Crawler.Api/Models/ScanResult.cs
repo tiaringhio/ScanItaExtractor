@@ -10,4 +10,6 @@ public sealed class ScanResult
     public string? PageUrl { get; set; }
     [JsonPropertyName("isValidPage")]
     public bool IsValidPage { get; set; }
+    [JsonPropertyName("expirationTime")]
+    public long ExpirationTime { get; set; }
 }

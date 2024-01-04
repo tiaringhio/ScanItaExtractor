@@ -1,30 +1,57 @@
 using QuestPDF.Infrastructure;
 using ScanIta.Crawler.Api.Extensions;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = WebApplicationBuilderExtensions.CreateBootstrapLogger();
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddControllers();
-
-builder.Services.AddScanItaHttpClient();
-
-builder.Services.AddBusiness();
-
-QuestPDF.Settings.License = LicenseType.Community;
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+try
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    Log.Information("Starting API");
+    var builder = WebApplication.CreateBuilder(args);
+
+    builder.AddSerilog(builder.Configuration);
+
+    builder.Services.AddApplicationInsightsTelemetry();
+    
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+    builder.Services.AddControllers();
+
+    builder.Services.AddScanItaHttpClient();
+
+    builder.Services.AddBusiness();
+
+    builder.Services.AddMemoryCache();
+
+    QuestPDF.Settings.License = LicenseType.Community;
+
+    var app = builder.Build();
+
+    // expose content-disposition header to allow client to use the pdf filename
+    app.UseCors(
+        options => options
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .WithExposedHeaders("Content-Disposition"));
+
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
+    app.UseHttpsRedirection();
+    app.MapControllers();
+
+    app.Run();
 }
-
-app.UseHttpsRedirection();
-app.MapControllers();
-
-app.Run();
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application start-up failed {Ex1} {Ex2}", ex, ex.Message);
+}
+finally
+{
+    Log.CloseAndFlush();
+}

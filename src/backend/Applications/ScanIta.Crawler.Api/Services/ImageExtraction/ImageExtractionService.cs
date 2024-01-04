@@ -1,14 +1,30 @@
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.Caching.Memory;
 using ScanIta.Crawler.Api.Models;
 using ScanIta.Crawler.Api.Constants;
+using ILogger = Serilog.ILogger;
 
 namespace ScanIta.Crawler.Api.Services.ImageExtraction;
 
-public sealed partial class ImageExtractionService(IHttpClientFactory httpClientFactory, ILogger<ImageExtractionService> logger) : IImageExtractionService
+public sealed partial class ImageExtractionService : IImageExtractionService
 {
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger _logger;
+    private readonly IMemoryCache _memoryCache;
+
+    public ImageExtractionService(
+        IHttpClientFactory httpClientFactory,
+        ILogger logger,
+        IMemoryCache memoryCache)
+    {
+        _httpClientFactory = httpClientFactory;
+        _logger = logger;
+        _memoryCache = memoryCache;
+    }
+
     private const int FirstPage = 2;
     
-    public async Task<IEnumerable<ScanResult>> ExtractPagesAsync(string scanUrl)
+    public async Task<IEnumerable<ScanResult>> ExtractPagesAsync(string scanUrl, CancellationToken cts = default)
     {
         try
         {
@@ -29,13 +45,13 @@ public sealed partial class ImageExtractionService(IHttpClientFactory httpClient
                 scanUrl = urlWithoutPages.AbsolutePath;
             }
 
-            var nextPage = await ExtractPageAsync($"{SharedConstants.ScanItaBaseUrl}{scanUrl}/{currentPage}", isFirstPage: true);
+            var nextPage = await ExtractPageAsync($"{SharedConstants.ScanItaBaseUrl}{scanUrl}/{currentPage}", isFirstPage: true, cancellationToken: cts);
             
             while (nextPage is {IsValidPage: true})
             {
                 pages.Add(nextPage);
                 currentPage++;
-                nextPage = await ExtractPageAsync($"{SharedConstants.ScanItaBaseUrl}{scanUrl}/{currentPage}");
+                nextPage = await ExtractPageAsync($"{SharedConstants.ScanItaBaseUrl}{scanUrl}/{currentPage}", cancellationToken: cts);
             }
             
             return pages;
@@ -43,31 +59,31 @@ public sealed partial class ImageExtractionService(IHttpClientFactory httpClient
         }
         catch (Exception e)
         {
-            logger.LogError("Error while extracting pages: {Message}", e.Message);
+            _logger.Error("Error while extracting pages: {Message}", e.Message);
         }
 
         return Enumerable.Empty<ScanResult>();
     }
     
-    private static bool IsUrlInCorrectFormat(string url)
-    {
-        var lastIndex = url.LastIndexOf('/');
-        return lastIndex != url.Length - 2;
-    }
-    
-    private async Task<ScanResult?> ExtractPageAsync(string scanUrl, bool isFirstPage = false)
+    private async Task<ScanResult?> ExtractPageAsync(string scanUrl, bool isFirstPage = false, CancellationToken cancellationToken = default)
     {
         try
         {
+            if (_memoryCache.TryGetValue(scanUrl, out ScanResult? cachedPage))
+            {
+                if (!IsScanExpired(cachedPage!))
+                    return cachedPage;
+            }
+            
             var scanId = new Uri(scanUrl);
-            var client = httpClientFactory.CreateClient(SharedConstants.ScanItaClientName);
+            var client = _httpClientFactory.CreateClient(SharedConstants.ScanItaClientName);
         
-            var response = await client.GetAsync(scanId.AbsolutePath);
+            var response = await client.GetAsync(scanId.AbsolutePath, cancellationToken);
 
             if (!response.IsSuccessStatusCode)
                 return null;
         
-            var body = await response.Content.ReadAsStringAsync();
+            var body = await response.Content.ReadAsStringAsync(cancellationToken);
             
             var matches = ExtractImageRegex().Matches(body);
             
@@ -98,14 +114,23 @@ public sealed partial class ImageExtractionService(IHttpClientFactory httpClient
             }
             result.PageUrl = imageUrl;
             result.IsValidPage = true;
+            result.ExpirationTime = GetExpirationTime(imageUrl);
+            
+            _memoryCache.Set(scanUrl, result);
             return result;
         }
         catch (Exception e)
         {
-            logger.LogError("Error while extracting page: {Message}", e.Message);
+            _logger.Error("Error while extracting page: {Message}", e.Message);
         }
 
         return null;
+    }
+     
+    private static bool IsUrlInCorrectFormat(string url)
+    {
+        var lastIndex = url.LastIndexOf('/');
+        return lastIndex != url.Length - 2;
     }
     
     private static string ExtractChapterName(string body)
@@ -128,6 +153,19 @@ public sealed partial class ImageExtractionService(IHttpClientFactory httpClient
         }
 
         return string.Empty;
+    }
+    
+    private static long GetExpirationTime(string scanUrl)
+        => Convert.ToInt64(scanUrl
+            .Split('&')
+            .Last()
+            .Split('=')
+            .Last());
+    
+    private static bool IsScanExpired(ScanResult scan)
+    {
+        var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        return now > scan.ExpirationTime;
     }
 
     [GeneratedRegex("""<img[^>]*class=['\"]img-fluid['\"][^>]*>""")]

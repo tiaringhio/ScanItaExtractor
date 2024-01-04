@@ -400,3 +400,5 @@ FodyWeavers.xsd
 
 # JetBrains
 .idea/
+
+*.bicepparam

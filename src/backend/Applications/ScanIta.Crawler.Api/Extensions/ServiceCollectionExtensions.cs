@@ -1,6 +1,6 @@
 using ScanIta.Crawler.Api.Constants;
 using ScanIta.Crawler.Api.Services.ImageExtraction;
-using ImageExtractionService = ScanIta.Crawler.Api.Services.ImageExtraction.ImageExtractionService;
+using ScanIta.Crawler.Api.Services.Pdf;
 
 namespace ScanIta.Crawler.Api.Extensions;
 
@@ -17,5 +17,6 @@ public static class ServiceCollectionExtensions
     public static void AddBusiness(this IServiceCollection services)
     {
         services.AddScoped<IImageExtractionService, ImageExtractionService>();
+        services.AddScoped<IMangaService, MangaService>();
     }
 }
