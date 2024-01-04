@@ -1,1 +1,1 @@
-# ScanIta.Crawler
+# ScanIta.Extractor

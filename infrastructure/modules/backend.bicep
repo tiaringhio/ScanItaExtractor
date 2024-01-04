@@ -1,6 +1,6 @@
 param name string
 param location string
-param apiImage string = 'ghcr.io/tiaringhio/scanitaextractor/api:latest'
+param apiImage string = 'ghcr.io/tiaringhio/scanitaextractor:latest'
 
 resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2022-10-01' existing = {
   name: 'log-${name}'
