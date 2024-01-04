@@ -50,4 +50,4 @@ jobs:
         context: .
         file: ./src/backend/Applications/ScanIta.Crawler.Api/Dockerfile
         push: true
-        tags: ghcr.io/scanitaextractor/api:latest
+        tags: ghcr.io/tiaringhio/scanitaextractor/api:latest
