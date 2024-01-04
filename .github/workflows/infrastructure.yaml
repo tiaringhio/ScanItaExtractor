@@ -45,5 +45,5 @@ jobs:
           subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
           resourceGroupName: ${{ secrets.AZURE_RG }}
           template: infrastructure/main.bicep
-          parameters: 'projectName=${{ secrets.PROJECTNAME }} location=westeurope'
+          parameters: 'projectName=${{ secrets.PROJECTNAME }} location=westeurope linkPreviewApiKey=${{ secrets.LINK_PREVIEW_API_KEY }}'
           failOnStdErr: false
