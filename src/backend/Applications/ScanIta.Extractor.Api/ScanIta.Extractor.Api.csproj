@@ -7,6 +7,7 @@
         <InvariantGlobalization>true</InvariantGlobalization>
         <UserSecretsId>8335d734-36fa-411b-b797-43d2be4f3539</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <RootNamespace>ScanIta.Crawler.Api</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

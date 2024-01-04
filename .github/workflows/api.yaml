@@ -48,6 +48,6 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: ./src/backend/Applications/ScanIta.Crawler.Api/Dockerfile
+        file: ./src/backend/Applications/ScanIta.Extractor.Api/Dockerfile
         push: true
         tags: ghcr.io/tiaringhio/scanitaextractor/api:latest
