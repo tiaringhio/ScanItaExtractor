@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ScanIta.Crawler.Api.Models;
 using ScanIta.Crawler.Api.Services.ImageExtraction;
 using ScanIta.Crawler.Api.Services.Pdf;
 
@@ -6,38 +7,21 @@ namespace ScanIta.Crawler.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
-public sealed class EtractorController : ControllerBase
+public sealed class ExtractorController(IImageExtractionService imageExtractionService) : ControllerBase
 {
-    private readonly IImageExtractionService _imageExtractionService;
-
-    public EtractorController(IImageExtractionService imageExtractionService)
-    {
-        _imageExtractionService = imageExtractionService;
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] string scanUrl)
-    {
-        var imageUrl = await _imageExtractionService.ExtractPageAsync(scanUrl);
-
-        if (string.IsNullOrEmpty(imageUrl.PageUrl))
-            return NotFound();
-
-        return Ok(imageUrl);
-    }
-    
     [HttpGet]
     public async Task<IActionResult> GetMultiple([FromQuery] string scanUrl)
     {
-        var imageUrls = await _imageExtractionService.ExtractPagesAsync(scanUrl);
+        var imageUrls = await imageExtractionService.ExtractPagesAsync(scanUrl);
 
-        if (imageUrls.Count == 0)
+        var scanResults = imageUrls as ScanResult[] ?? imageUrls.ToArray();
+        
+        if (scanResults.Length == 0)
             return NotFound();
         
-        var pdf = await Manga.GeneratePdf(imageUrls);
+        var pdf = await Manga.GeneratePdf(scanResults.Select(x => x.PageUrl));
         
-        return File(pdf, "application/pdf", "manga.pdf");
+        var title = scanResults.First().ChapterName;
+        return File(pdf, "application/pdf",$"{title}.pdf");
     }
-
-    
 }

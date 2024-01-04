@@ -1,7 +1,7 @@
 namespace ScanIta.Crawler.Api.Constants;
 
-public static class Constants
+public static class SharedConstants
 {
-    public static string ScanItaBaseUrl = "https://scan-ita.com";
+    public static string ScanItaBaseUrl = "https://scanita.org";
     public static string ScanItaClientName = "ScanIta";
 }

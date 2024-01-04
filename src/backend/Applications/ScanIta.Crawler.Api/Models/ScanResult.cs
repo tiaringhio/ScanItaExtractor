@@ -1,6 +1,13 @@
+using System.Text.Json.Serialization;
+
 namespace ScanIta.Crawler.Api.Models;
 
-public class ScanResult
+public sealed class ScanResult
 {
-    
+    [JsonPropertyName("chapterName")]
+    public string? ChapterName { get; set; }
+    [JsonPropertyName("pageUrl")]
+    public string? PageUrl { get; set; }
+    [JsonPropertyName("isValidPage")]
+    public bool IsValidPage { get; set; }
 }

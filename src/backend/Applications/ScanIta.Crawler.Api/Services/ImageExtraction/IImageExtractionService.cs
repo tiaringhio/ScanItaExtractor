@@ -1,9 +1,8 @@
 using ScanIta.Crawler.Api.Models;
 
-namespace ScanIta.Crawler.Api.Services;
+namespace ScanIta.Crawler.Api.Services.ImageExtraction;
 
 public interface IImageExtractionService
 {
-    Task<ScanResult?> ExtractPageAsync(string scanUrl);
-    Task<IList<string>> ExtractPagesAsync(string scanUrl);
+    Task<IEnumerable<ScanResult>> ExtractPagesAsync(string scanUrl);
 }
