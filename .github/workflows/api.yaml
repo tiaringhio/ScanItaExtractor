@@ -50,4 +50,4 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: ghcr.io/${{ github.repository }}/api:latest
+        tags: ghcr.io/scanitaextractor/api:latest
