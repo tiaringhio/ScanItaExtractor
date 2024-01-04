@@ -50,7 +50,7 @@ jobs:
         context: .
         file: ./src/backend/Applications/ScanIta.Extractor.Api/Dockerfile
         push: true
-        tags: ghcr.io/tiaringhio/scanitaextractor:latest
+        tags: ghcr.io/tiaringhio/scanitaextractor:latest , ghcr.io/tiaringhio/scanitaextractor:${{ github.sha }}
 
   deploy:
     needs: [changes, build-and-push]
@@ -70,4 +70,4 @@ jobs:
             echo "Installing containerapp extension"
             az extension add -n containerapp
             echo "Creating new revision"
-            az containerapp update -n ${{ secrets.API_NAME }} -g ${{ secrets.AZURE_RG }} --image ghcr.io/tiaringhio/scanitaextractor:latest
+            az containerapp update -n ${{ secrets.API_NAME }} -g ${{ secrets.AZURE_RG }} --image ghcr.io/tiaringhio/scanitaextractor:${{ github.sha }}
