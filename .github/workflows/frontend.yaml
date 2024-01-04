@@ -17,8 +17,8 @@ jobs:
       with:
         filters: |
           build:
-            - 'src/frontend/dashee/**'
-            - '.github/workflows/client.yaml'
+            - 'src/frontend/**'
+            - '.github/workflows/frontend.yaml'
 
   src:
     needs: changes
