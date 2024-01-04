@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using QuestPDF.Fluent;
-using QuestPDF.Helpers;
 using QuestPDF.Previewer;
 using Image = SixLabors.ImageSharp.Image;
 
@@ -29,47 +28,26 @@ public sealed class Manga
 
         var document = Document.Create(container =>
         {
-            var aspectRatios = pages
-                .Select(x => Math.Round((double)x.Width / x.Height, 2) * 1000)
-                .ToList();
-            
-            var mostCommonAspectRatio = aspectRatios
-                .GroupBy(x => x)
-                .OrderByDescending(x => x.Count())
-                .First()
-                .Key;
-            
-            for (var index = 0; index < pages.Count; index++)
+            foreach (var mangaPage in pages)
             {
-                var mangaPage = pages[index];
+                var page1 = mangaPage;
                 container.Page(page =>
                 {
-                    page.Size(PageSizes.A5);
                     // if scan is horizontal, rotate it
-                    if (mangaPage.Width > mangaPage.Height)
+                    if (page1.Width > page1.Height)
                     {
                         page
                             .Content()
                             .RotateLeft()
-                            .Image(mangaPage.Data)
+                            .Image(page1.Data)
                             .FitUnproportionally();
                     }
                     else
                     {
-                        // if scan has different aspect ratio, fit it to the most common one
-                        if (aspectRatios[index] != mostCommonAspectRatio)
-                        {
-                            page
-                                .Content()
-                                .Image(mangaPage.Data)
-                                .FitUnproportionally();
-                        }
-                        else
-                        {
-                            page
-                                .Content()
-                                .Image(mangaPage.Data);
-                        }
+                        page
+                            .Content()
+                            .Image(page1.Data)
+                            .FitUnproportionally();
                     }
                 });
             }

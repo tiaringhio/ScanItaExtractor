@@ -29,7 +29,7 @@ public sealed partial class ImageExtractionService(IHttpClientFactory httpClient
                 scanUrl = urlWithoutPages.AbsolutePath;
             }
 
-            var nextPage = await ExtractPageAsync($"{scanUrl}/{currentPage}", isFirstPage: true);
+            var nextPage = await ExtractPageAsync($"{SharedConstants.ScanItaBaseUrl}{scanUrl}/{currentPage}", isFirstPage: true);
             
             while (nextPage is {IsValidPage: true})
             {
