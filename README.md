@@ -8,6 +8,12 @@
 
 You can deploy your own version to Azure by click the button above, here'e brief link of the components:
 
+## DevOps
+
+[![Api](https://github.com/tiaringhio/ScanItaExtractor/actions/workflows/api.yaml/badge.svg?branch=master)](https://github.com/tiaringhio/ScanItaExtractor/actions/workflows/api.yaml) [![Client](https://github.com/tiaringhio/ScanItaExtractor/actions/workflows/frontend.yaml/badge.svg?branch=master)](https://github.com/tiaringhio/ScanItaExtractor/actions/workflows/frontend.yaml) [![Infrastructure](https://github.com/tiaringhio/ScanItaExtractor/actions/workflows/infrastructure.yaml/badge.svg?branch=master)](https://github.com/tiaringhio/ScanItaExtractor/actions/workflows/infrastructure.yaml)
+
+I'm using GitHub actions to deploy changes to the components of this application, i will gradually add information on how to replicate the DevOps configuration in order to have you very own infra available. This will probably mean that the Deplyo to Azure button will vanish in place of a more structured procedure.
+
 ## Azure Infra Components
 
 - **Azure Container App Environment & Container App**: for the API, the image is hosted on this repo using ghcr. It's written to be scaled to 0 so you will use it (almost) only when you need it.
