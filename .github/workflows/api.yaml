@@ -24,7 +24,8 @@ jobs:
               - 'src/backend/Applications/ScanIta.Extractor.Api/**'
   
   build-and-push:
-    needs: [changes]
+    needs: changes
+    if: ${{ needs.changes.outputs.src == 'true' }}
     runs-on: ubuntu-latest
 
     steps:
