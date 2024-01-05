@@ -46,5 +46,5 @@ jobs:
           region: 'westeurope'
           subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
           template: infrastructure/main.bicep
-          parameters: 'projectName=${{ secrets.PROJECTNAME }} location=westeurope'
+          parameters: 'projectName=${{ secrets.AZURE_PROJECTNAME }} location=westeurope'
           failOnStdErr: false
