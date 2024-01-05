@@ -2,7 +2,6 @@ targetScope = 'subscription'
 
 param projectName string
 param location string = 'westeurope'
-param linkPreviewApiKey string
 
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2023-07-01' = {
   name: '${projectName}-rg'
@@ -33,6 +32,5 @@ module backend './modules/backend.bicep' = {
   params: {
     name: projectName
     location: location
-    linkPreviewApiKey: linkPreviewApiKey
   }
 }
