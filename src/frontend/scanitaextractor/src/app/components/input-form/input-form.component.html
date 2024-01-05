@@ -24,10 +24,6 @@
             </button>
         </div>
         <div class="flex justify-center mx-auto pt-4">
-            <p *ngIf="(isLivePreviewDisabled | async) === true"
-                class="text-gray-300 max-w-sm text-center">
-                Live preview is disabled, you have exceeded the maximum number of previews (60/h).
-            </p>
             <app-link-preview></app-link-preview>
         </div>
     </form>

@@ -1,8 +1,6 @@
 using QuestPDF.Infrastructure;
 using ScanIta.Crawler.Api.Extensions;
-using ScanIta.Crawler.Api.Options;
 using Serilog;
-using ValidateOrThrow;
 
 Log.Logger = WebApplicationBuilderExtensions.CreateBootstrapLogger();
 
@@ -19,13 +17,11 @@ try
     builder.Services.AddSwaggerGen();
     builder.Services.AddControllers();
 
-    builder.Services.HttpClients(builder.Configuration);
+    builder.Services.HttpClients();
 
     builder.Services.AddBusiness();
 
     builder.Services.AddMemoryCache();
-
-    builder.Services.AddOptionsOrThrow<LinkPreviewOptions>();
 
     QuestPDF.Settings.License = LicenseType.Community;
 

@@ -4,7 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ScanItaUrlPattern } from 'src/app/helpers/utils/patterns';
 import { PdfgeneratorService } from 'src/app/services/pdfgenerator.service';
 import { LinkPreviewComponent } from '../link-preview/link-preview.component';
-import { Subject, debounce, pairwise, startWith, takeUntil, timer } from 'rxjs';
+import { debounce, pairwise, startWith, timer } from 'rxjs';
 
 @Component({
   selector: 'app-input-form',
@@ -15,7 +15,6 @@ import { Subject, debounce, pairwise, startWith, takeUntil, timer } from 'rxjs';
 })
 export class InputFormComponent implements OnInit {
 
-  isLivePreviewDisabled = new Subject<boolean>();
   constructor(public pdfGenerator: PdfgeneratorService) {}
 
   formGroup = new FormGroup({
@@ -30,18 +29,11 @@ export class InputFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.pdfGenerator.isLivePreviewEnabled$.subscribe((result) => {
-      if (!result) {
-        this.isLivePreviewDisabled.next(true)
-        this.isLivePreviewDisabled.complete()
-      }
-    })
     this.formGroup.valueChanges
       .pipe(
         startWith(this.formGroup.value),
         pairwise(),
-        debounce(([prev,next]) => prev.scanUrl !== next.scanUrl ? timer(1000) : timer(0)),
-        takeUntil(this.isLivePreviewDisabled)
+        debounce(([prev,next]) => prev.scanUrl !== next.scanUrl ? timer(500) : timer(0))
       )
       .subscribe(([prev, next]) => {
         this.getPreviewLink(next.scanUrl as string);

@@ -1,11 +1,8 @@
-using System.Net;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using ScanIta.Crawler.Api.Constants;
 using ScanIta.Crawler.Api.Models;
-using ScanIta.Crawler.Api.Options;
 using ScanIta.Crawler.Api.Services.ImageExtraction;
 using ScanIta.Crawler.Api.Services.Pdf;
+using ScanIta.Crawler.Api.Services.Preview;
 
 namespace ScanIta.Crawler.Api.Controllers;
 
@@ -15,19 +12,15 @@ public sealed class GeneratorController : ControllerBase
 {
     private readonly IImageExtractionService _imageExtractionService;
     private readonly IMangaService _mangaService;
-    private readonly LinkPreviewOptions _linkPreviewOptions;
-    private readonly IHttpClientFactory _httpClientFactory;
-    
+    private readonly IPreviewService _previewService;
     public GeneratorController(
         IImageExtractionService imageExtractionService,
         IMangaService mangaService,
-        IOptions<LinkPreviewOptions> linkPreviewOptions,
-        IHttpClientFactory httpClientFactory)
+        IPreviewService previewService)
     {
         _imageExtractionService = imageExtractionService;
         _mangaService = mangaService;
-        _httpClientFactory = httpClientFactory;
-        _linkPreviewOptions = linkPreviewOptions.Value;
+        _previewService = previewService;
     }
 
     [HttpGet]
@@ -56,21 +49,11 @@ public sealed class GeneratorController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> PreviewLink([FromQuery] string link)
+    public async Task<IActionResult> PreviewLink([FromQuery] string link, CancellationToken cts = default)
     {
-        var client = _httpClientFactory.CreateClient(SharedConstants.LinkPreviewBaseUrl);
-        
-        var response = await client.GetAsync($"?q={link}");
-        if (response.StatusCode == HttpStatusCode.TooManyRequests)
-        {
-            return StatusCode(429);
-        }
-        if (!response.IsSuccessStatusCode)
-        {
-            return BadRequest();
-        }
-        var content = await response.Content.ReadFromJsonAsync<PreviewLinkResult>();
-        
-        return Ok(content);
+        var previewLink = await _previewService.GetPreviewLinkAsync(link, cts);
+        if (previewLink == null)
+            return NotFound();
+        return Ok(previewLink);
     }
 }

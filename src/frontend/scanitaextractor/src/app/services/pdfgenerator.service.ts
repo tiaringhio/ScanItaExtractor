@@ -13,14 +13,12 @@ export class PdfgeneratorService {
   public isLoading$: Subject<boolean>
   private _pdfname: BehaviorSubject<string>;
   public previewLink$: BehaviorSubject<PreviewLink | null>;
-  isLivePreviewEnabled$: BehaviorSubject<boolean>;
 
   constructor(private _http: HttpClient) {
     this.generatedPdf$ = new Subject<Blob>();
     this.isLoading$ = new Subject<boolean>();
     this._pdfname = new BehaviorSubject<string>("");
     this.previewLink$ = new BehaviorSubject<PreviewLink | null>(null);
-    this.isLivePreviewEnabled$ = new BehaviorSubject<boolean>(true);
   }
 
   get pdfname(): string {
@@ -61,9 +59,7 @@ export class PdfgeneratorService {
         this.previewLink$.next(preview);
         return result;
       }), catchError((err) => {
-        if (err.status === 429) {
-          this.isLivePreviewEnabled$.next(false);
-        }
+        console.error(err);
         return EMPTY;
       }));
   }

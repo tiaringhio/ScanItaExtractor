@@ -1,7 +1,6 @@
 param name string
 param location string
 param apiImage string = 'ghcr.io/tiaringhio/scanitaextractor:latest'
-param linkPreviewApiKey string
 
 resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2022-10-01' existing = {
   name: 'log-${name}'
@@ -67,10 +66,6 @@ resource api 'Microsoft.App/containerApps@2023-08-01-preview' = {
           name: 'application-insights'
           value: applicationInsights.properties.ConnectionString
         }
-        {
-          name: 'link-preview-api-key'
-          value: linkPreviewApiKey
-        }
       ]
     }
     template: {
@@ -82,10 +77,6 @@ resource api 'Microsoft.App/containerApps@2023-08-01-preview' = {
             {
               name: 'ConnectionStrings__ApplicationInsights'
               secretRef: 'application-insights'
-            }
-            {
-              name: 'LinkPreview__ApiKey'
-              secretRef: 'link-preview-api-key'
             }
           ]
           resources: {

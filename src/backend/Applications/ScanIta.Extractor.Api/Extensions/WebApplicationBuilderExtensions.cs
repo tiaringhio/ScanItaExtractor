@@ -20,13 +20,12 @@ public static class WebApplicationBuilderExtensions
             .CreateBootstrapLogger();
     }
     
-    public static WebApplicationBuilder AddSerilog(
-        this WebApplicationBuilder builder,
+    public static void AddSerilog(this WebApplicationBuilder builder,
         IConfiguration configuration,
         string applicationname = "ScanIta.Extractor.API")
     {
         builder.Host.UseSerilog(
-            (context, loggerConfiguration) =>
+            (_, loggerConfiguration) =>
             {
                 loggerConfiguration.ReadFrom.Configuration(configuration);
 
@@ -34,16 +33,18 @@ public static class WebApplicationBuilderExtensions
                     .WithProperty("Application", applicationname)
                     .Enrich.FromLogContext()
                     .WriteTo.Console()
-                    .WriteTo.ApplicationInsights(
+                    .Enrich.FromLogContext()
+                    .Enrich.WithExceptionDetails();
+
+                if (!string.IsNullOrEmpty(configuration.GetConnectionString("ApplicationInsights")))
+                {
+                    loggerConfiguration.WriteTo.ApplicationInsights(
                         new TelemetryConfiguration
                         {
                             ConnectionString = configuration.GetConnectionString("ApplicationInsights")
                         }, TelemetryConverter.Traces
-                    )
-                    .Enrich.FromLogContext()
-                    .Enrich.WithExceptionDetails();
+                    );
+                }
             });
-
-        return builder;
     }
 }

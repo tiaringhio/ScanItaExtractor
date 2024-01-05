@@ -1,24 +1,17 @@
 using ScanIta.Crawler.Api.Constants;
 using ScanIta.Crawler.Api.Services.ImageExtraction;
 using ScanIta.Crawler.Api.Services.Pdf;
+using ScanIta.Crawler.Api.Services.Preview;
 
 namespace ScanIta.Crawler.Api.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static void HttpClients(this IServiceCollection services,
-        IConfiguration configuration)
+    public static void HttpClients(this IServiceCollection services)
     {
         services.AddHttpClient(SharedConstants.ScanItaClientName, client =>
         {
             client.BaseAddress = new Uri(SharedConstants.ScanItaBaseUrl);
-        });
-        
-        var linkPreviewApiKey = configuration.GetSection("LinkPreview:ApiKey").Value;
-        services.AddHttpClient(SharedConstants.LinkPreviewBaseUrl, client =>
-        {
-            client.BaseAddress = new Uri(SharedConstants.LinkPreviewBaseUrl);
-            client.DefaultRequestHeaders.Add("X-Linkpreview-Api-Key", linkPreviewApiKey);
         });
     }
     
@@ -26,5 +19,6 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<IImageExtractionService, ImageExtractionService>();
         services.AddScoped<IMangaService, MangaService>();
+        services.AddScoped<IPreviewService, PreviewService>();
     }
 }

@@ -37,12 +37,9 @@ when everything is done visit the url http://localhost:4200.
 ### Backend
 
 You must have installed .NET 8 SDK, i won't cover how to install here.
-Populate you appsettings.json or better yet create a secrets file with the following structure:
+> OPTIONAL: Populate you appsettings.json or better yet create a secrets file with the following structure:
 ```json
 {
-  "LinkPreview": {
-    "ApiKey": "linkpreview.net api (free, just have to register)"
-  },
   "ConnectionStrings": {
     "ApplicationInsights": "connection string to an application insights instance"
   }
