@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using ScanIta.Crawler.Api.Constants;
 using ScanIta.Crawler.Api.Models;
+using ScanIta.Crawler.Api.Options;
 using ScanIta.Crawler.Api.Services.ImageExtraction;
 using ScanIta.Crawler.Api.Services.Pdf;
 
@@ -11,13 +14,19 @@ public sealed class GeneratorController : ControllerBase
 {
     private readonly IImageExtractionService _imageExtractionService;
     private readonly IMangaService _mangaService;
+    private readonly LinkPreviewOptions _linkPreviewOptions;
+    private readonly IHttpClientFactory _httpClientFactory;
     
     public GeneratorController(
         IImageExtractionService imageExtractionService,
-        IMangaService mangaService)
+        IMangaService mangaService,
+        IOptions<LinkPreviewOptions> linkPreviewOptions,
+        IHttpClientFactory httpClientFactory)
     {
         _imageExtractionService = imageExtractionService;
         _mangaService = mangaService;
+        _httpClientFactory = httpClientFactory;
+        _linkPreviewOptions = linkPreviewOptions.Value;
     }
 
     [HttpGet]
@@ -43,5 +52,20 @@ public sealed class GeneratorController : ControllerBase
         {
             return StatusCode(500, e.Message);
         }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> PreviewLink([FromQuery] string link)
+    {
+        var client = _httpClientFactory.CreateClient(SharedConstants.LinkPreviewBaseUrl);
+        
+        var response = await client.GetAsync($"?q={link}");
+        if (!response.IsSuccessStatusCode)
+        {
+            return BadRequest();
+        }
+        var content = await response.Content.ReadFromJsonAsync<PreviewLinkResult>();
+        
+        return Ok(content);
     }
 }

@@ -11,5 +11,5 @@ import { FooterComponent } from './components/footer/footer.component';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'scanitaextractor';
+  title = 'Scan Ita Extractor';
 }

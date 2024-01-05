@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScanIta.Crawler.Api", "src\backend\Applications\ScanIta.Crawler.Api\ScanIta.Crawler.Api.csproj", "{E420FC08-A4BF-4BFD-970C-F71DC1F70FDD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScanIta.Extractor.Api", "src\backend\Applications\ScanIta.Extractor.Api\ScanIta.Extractor.Api.csproj", "{E420FC08-A4BF-4BFD-970C-F71DC1F70FDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

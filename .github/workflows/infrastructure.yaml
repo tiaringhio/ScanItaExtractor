@@ -42,8 +42,9 @@ jobs:
       - name: deploy
         uses: azure/arm-deploy@v1
         with:
+          scope: 'subscription'
+          region: 'westeurope'
           subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
-          resourceGroupName: ${{ secrets.AZURE_RG }}
           template: infrastructure/main.bicep
-          parameters: 'projectName=${{ secrets.PROJECTNAME }} location=westeurope'
+          parameters: 'projectName=${{ secrets.PROJECTNAME }} location=westeurope linkPreviewApiKey=${{ secrets.LINK_PREVIEW_API_KEY }}'
           failOnStdErr: false
