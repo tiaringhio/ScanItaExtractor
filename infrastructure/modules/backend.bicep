@@ -24,7 +24,6 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' existing
   name: 'ai-${name}'
 }
 
-
 resource api 'Microsoft.App/containerApps@2023-08-01-preview' = {
   name: 'api-${name}'
   location: location
