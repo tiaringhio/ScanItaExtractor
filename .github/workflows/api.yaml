@@ -57,8 +57,7 @@ jobs:
         file: ./src/backend/Applications/ScanIta.Extractor.Api/Dockerfile
         push: true
         labels: ${{ steps.meta.outputs.labels }}
-        tags: ${{ steps.meta.outputs.tags }}
-        #tags: ghcr.io/tiaringhio/scanitaextractor:latest , ghcr.io/tiaringhio/scanitaextractor:${{ github.sha }}
+        tags: ghcr.io/tiaringhio/scanitaextractor:latest , ghcr.io/tiaringhio/scanitaextractor:${{ github.sha }}
 
   deploy:
     needs: [changes, build-and-push]
