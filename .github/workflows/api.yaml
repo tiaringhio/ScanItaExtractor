@@ -24,6 +24,7 @@ jobs:
               - 'src/backend/Applications/ScanIta.Extractor.Api/**'
   
   build-and-push:
+    needs: [changes]
     runs-on: ubuntu-latest
 
     steps:
@@ -60,7 +61,7 @@ jobs:
         tags: ghcr.io/tiaringhio/scanitaextractor:latest , ghcr.io/tiaringhio/scanitaextractor:${{ github.sha }}
 
   deploy:
-    needs: [changes, build-and-push]
+    needs: [build-and-push]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
