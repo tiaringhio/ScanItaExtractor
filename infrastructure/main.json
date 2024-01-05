@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.22.6.54827",
-      "templateHash": "1708993666554656460"
+      "templateHash": "1113178627445816921"
     }
   },
   "parameters": {
@@ -178,7 +178,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.22.6.54827",
-              "templateHash": "3704398519489867328"
+              "templateHash": "6229889889626660588"
             }
           },
           "parameters": {
@@ -190,7 +190,7 @@
             },
             "apiImage": {
               "type": "string",
-              "defaultValue": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
+              "defaultValue": "ghcr.io/tiaringhio/scanitaextractor:latest"
             }
           },
           "resources": [
@@ -274,7 +274,17 @@
                   ],
                   "scale": {
                     "minReplicas": 0,
-                    "maxReplicas": 1
+                    "maxReplicas": 1,
+                    "rules": [
+                      {
+                        "name": "http-scaler",
+                        "http": {
+                          "metadata": {
+                            "concurrentRequests": "100"
+                          }
+                        }
+                      }
+                    ]
                   }
                 }
               },

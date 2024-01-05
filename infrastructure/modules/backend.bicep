@@ -87,6 +87,16 @@ resource api 'Microsoft.App/containerApps@2023-08-01-preview' = {
       scale: {
         minReplicas: 0
         maxReplicas: 1
+        rules: [
+          {
+            name: 'http-scaler'
+            http: {
+              metadata: {
+                concurrentRequests: '100'
+              }
+            }
+          }
+        ]
       }
     }
   }
