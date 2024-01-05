@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using ScanIta.Crawler.Api.Constants;
@@ -60,6 +61,10 @@ public sealed class GeneratorController : ControllerBase
         var client = _httpClientFactory.CreateClient(SharedConstants.LinkPreviewBaseUrl);
         
         var response = await client.GetAsync($"?q={link}");
+        if (response.StatusCode == HttpStatusCode.TooManyRequests)
+        {
+            return StatusCode(429);
+        }
         if (!response.IsSuccessStatusCode)
         {
             return BadRequest();

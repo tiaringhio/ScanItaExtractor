@@ -1,0 +1,12 @@
+<ng-container *ngIf="preview !== null">
+    <div class="m-auto text-center space-y-4">
+        <h1 class="text-xl font-bold text-gray-100">Preview</h1>
+        
+        <div class="m-auto text-center flex flex-col text-gray-300 aspect-square rounded-lg border border-gray-700 w-1/2">
+            <a [href]="preview.url" target="_blank">
+                <img class="w-full object-cover" [src]="preview.image" width="250px">
+            </a>
+            <p class="py-2 px-4 font-semibold">{{ preview.title }}</p>
+        </div>
+    </div>
+</ng-container>
