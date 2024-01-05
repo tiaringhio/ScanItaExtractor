@@ -8,9 +8,9 @@ You can deploy your own version to Azure by click the button above, here'e brief
 
 ## Azure Infra Components
 
-- Azure Container App Environment & Container App: for the API, the image is hosted on this repo using ghcr. It's written to be scaled to 0 so you will use it (almost) only when you need it.
-- Azure Static Web App: for the client, the code is stored in the frontend folder in this repo.
-- Log Analytics & Application Insights: usdeful for monitoring purposes
+- *Azure Container App Environment & Container App*: for the API, the image is hosted on this repo using ghcr. It's written to be scaled to 0 so you will use it (almost) only when you need it.
+- *Azure Static Web App*: for the client, the code is stored in the frontend folder in this repo.
+- *Log Analytics & Application Insights*: useful for monitoring purposes.
 
 ## How does it work
 
@@ -26,6 +26,18 @@ when everything is done visit the url http://localhost:4200.
 ### Backend
 
 You must have installed .NET 8 SDK, i won't cover how to install here.
+Populate you appsettings.json or better create a secrets file withthe following structure:
+```json
+{
+  "LinkPreview": {
+    "ApiKey": "linkpreview.net api (free, just have to register)"
+  },
+  "ConnectionStrings": {
+    "ApplicationInsights": "connection string to an application insights instance"
+  }
+}
+```
+
 Go to the [api folder](/src/backend/Applications/ScanIta.Crawler.Api/) and run:
 
 `dotnet run`

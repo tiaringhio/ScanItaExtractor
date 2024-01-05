@@ -21,7 +21,7 @@ jobs:
         with:
           filters: |
             build:
-              - 'src/backend/Applications/**'
+              - 'src/backend/Applications/ScanIta.Extractor.Api/**'
   
   build-and-push:
     runs-on: ubuntu-latest
@@ -44,13 +44,21 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.TOKEN }}
 
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+      with:
+        images: ghcr.io/tiaringhio/scanitaextractor
+
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
       with:
         context: .
         file: ./src/backend/Applications/ScanIta.Extractor.Api/Dockerfile
         push: true
-        tags: ghcr.io/tiaringhio/scanitaextractor:latest , ghcr.io/tiaringhio/scanitaextractor:${{ github.sha }}
+        labels: ${{ steps.meta.outputs.labels }}
+        tags: ${{ steps.meta.outputs.tags }}
+        #tags: ghcr.io/tiaringhio/scanitaextractor:latest , ghcr.io/tiaringhio/scanitaextractor:${{ github.sha }}
 
   deploy:
     needs: [changes, build-and-push]
