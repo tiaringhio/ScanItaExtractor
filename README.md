@@ -1,5 +1,7 @@
 # ScanIta Extractor
 
+> WIP... infra will not deploy files to SWA, still figuring out a way to do it.
+
 .NET 8 API and Angular 16 SPA to convert [Scan Ita](https://scanita.org) manga scans to PDF, one chapter at a time.
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ftiaringhio%2FScanItaExtractor%2Fmaster%2Finfrastructure%2Fmain.json)
