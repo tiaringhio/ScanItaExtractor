@@ -5,6 +5,7 @@ import { ScanItaUrlPattern } from 'src/app/helpers/utils/patterns';
 import { PdfgeneratorService } from 'src/app/services/pdfgenerator.service';
 import { LinkPreviewComponent } from '../link-preview/link-preview.component';
 import { debounce, pairwise, startWith, timer } from 'rxjs';
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: 'app-input-form',
@@ -15,7 +16,20 @@ import { debounce, pairwise, startWith, timer } from 'rxjs';
 })
 export class InputFormComponent implements OnInit {
 
-  constructor(public pdfGenerator: PdfgeneratorService) {}
+  isLoading: boolean = false;
+  constructor(
+    public pdfGenerator: PdfgeneratorService,
+    private _route: ActivatedRoute) {
+    this.pdfGenerator.isLoading$.subscribe((value) => {
+      this.isLoading = value;
+    })
+    this._route.queryParams.subscribe(params => {
+      if (params["q"]) {
+        this.formGroup.controls['scanUrl'].setValue(params["q"]);
+        this.submit();
+      }
+    });
+  }
 
   formGroup = new FormGroup({
     scanUrl: new FormControl('', [
@@ -33,7 +47,7 @@ export class InputFormComponent implements OnInit {
       .pipe(
         startWith(this.formGroup.value),
         pairwise(),
-        debounce(([prev,next]) => prev.scanUrl !== next.scanUrl ? timer(500) : timer(0))
+        debounce(([prev,next]) => prev.scanUrl !== next.scanUrl ? timer(100) : timer(0))
       )
       .subscribe(([prev, next]) => {
         this.getPreviewLink(next.scanUrl as string);
@@ -49,13 +63,13 @@ export class InputFormComponent implements OnInit {
   submit() {
     if (this.formGroup.valid) {
       this.pdfGenerator.generatePdf(this.formGroup.value.scanUrl as string)
-      .subscribe((result) => {
-        const downloadURL = window.URL.createObjectURL(result);
-        const link = document.createElement('a');
-        window.open(URL.createObjectURL(result));
-        link.href = downloadURL;
-        link.download = this.pdfGenerator.pdfname;
-        link.click();
+        .subscribe((result) => {
+          const downloadURL = window.URL.createObjectURL(result);
+          const link = document.createElement('a');
+          window.open(URL.createObjectURL(result));
+          link.href = downloadURL;
+          link.download = this.pdfGenerator.pdfName;
+          link.click();
         })
     }
     else {

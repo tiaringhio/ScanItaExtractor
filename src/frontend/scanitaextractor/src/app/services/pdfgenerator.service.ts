@@ -11,18 +11,18 @@ export class PdfgeneratorService {
 
   public generatedPdf$: Subject<Blob>
   public isLoading$: Subject<boolean>
-  private _pdfname: BehaviorSubject<string>;
+  private _pdfName: BehaviorSubject<string>;
   public previewLink$: BehaviorSubject<PreviewLink | null>;
 
   constructor(private _http: HttpClient) {
     this.generatedPdf$ = new Subject<Blob>();
     this.isLoading$ = new Subject<boolean>();
-    this._pdfname = new BehaviorSubject<string>("");
+    this._pdfName = new BehaviorSubject<string>("");
     this.previewLink$ = new BehaviorSubject<PreviewLink | null>(null);
   }
 
-  get pdfname(): string {
-    return this._pdfname.getValue();
+  get pdfName(): string {
+    return this._pdfName.getValue();
   }
 
   generatePdf(scanUrl: string) {
@@ -36,7 +36,7 @@ export class PdfgeneratorService {
     }).pipe(map((result) => {
       let contentDisposition = result.headers.get('Content-Disposition');
       let filename = contentDisposition?.split(';')[1].split('=')[1].replace(/"/g, '');
-      this._pdfname.next(filename ?? "scanita.pdf");
+      this._pdfName.next(filename ?? "scanita.pdf");
       this.isLoading$.next(false);
       this.generatedPdf$.next(result.body as Blob);
       return result.body as Blob;
